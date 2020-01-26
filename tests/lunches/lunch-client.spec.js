@@ -1,5 +1,5 @@
-import LunchClient from '../src/lunches/lunch-client';
-import LunchInfo from '../src/lunches/lunch-info';
+import LunchClient from '../../src/lunches/lunch-client';
+import LunchInfo from '../../src/lunches/lunch-info';
 
 const mockServer = require('mockttp').getLocal();
 const chai = require('chai');

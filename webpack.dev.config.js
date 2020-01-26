@@ -12,7 +12,7 @@ module.exports = merge(common, {
   module: {
     rules: [
       {
-        test: /\.scss$/i,
+        test: /\.(css|scss)$/i,
         use: [
           'vue-style-loader',
           'style-loader', // add css to DOM

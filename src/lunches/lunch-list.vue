@@ -1,11 +1,12 @@
 <template>
     <div class="container">
-        <div class="row">
-            <div v-for="lunchInfo in this.lunchList">
+        <div class="row row-cols-2">
+            <div class="col" v-for="lunchInfo in this.lunchList">
                 <div class="card">
-                    <img class="card-img-top" src="" alt="">
+                    <img v-bind:src="lunchInfo.imageUrl" class="card-img-top" v-bind:alt="lunchInfo.name + ' photo'">
                     <div class="card-body">
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <h5 class="card-title">{{lunchInfo.name}}</h5>
+                        <p class="card-text">{{lunchInfo.description}}</p>
                     </div>
                 </div>
             </div>
@@ -18,13 +19,23 @@
     props: {
       lunchClient: {
         type: Object,
-        required: true
+        required: true,
       },
     },
     data() {
       return {
-        lunchList: this.lunchClient.fetchLunchesToday()
-      }
-    }
-  }
+        lunchList: [],
+      };
+    },
+    async created() {
+      this.lunchList = await this.lunchClient.fetchLunchesToday();
+    },
+  };
 </script>
+
+<style>
+    img {
+        max-height: 200px;
+        object-fit: cover;
+    }
+</style>

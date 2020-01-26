@@ -6,7 +6,7 @@ const router = new VueRouter({
   base: __dirname,
   routes: [
     {
-      path: '/launches',
+      path: '/lunches',
       name: 'LunchList',
       component: LunchListComponent,
       props: {
