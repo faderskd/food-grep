@@ -1,1 +1,2 @@
-celery -A app.celery worker -E -B --loglevel=INFO
+export PYTHONPATH=../
+celery -A scheduler.celery worker -E -B --loglevel=INFO

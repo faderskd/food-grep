@@ -3,7 +3,7 @@
     {
       "name": "Munja",
       "url": "https://www.facebook.com/MunjaRestaurant/",
-      "lunch_regex": ".*Munjowy Obiadek.*"
+      "lunch_regex": ".*Munj.*Obiad.*"
     },
     {
       "name": "Casa Ristoranti",
