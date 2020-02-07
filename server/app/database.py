@@ -2,8 +2,8 @@ import logging
 
 import redis
 
-from server.lunches import Lunch
-from server.config import REDIS_HOST, REDIS_PORT
+from server.app.lunches import Lunch
+from server.config.config import REDIS_HOST, REDIS_PORT
 
 logger = logging.getLogger(__name__)
 

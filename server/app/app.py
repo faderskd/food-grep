@@ -3,9 +3,9 @@ import logging
 
 from flask import Flask, jsonify
 
-from server.config import APP_PORT, APP_HOST
-from server.database import get_cached_lunches
-from server.lunches import get_restaurants
+from server.app.database import get_cached_lunches
+from server.app.lunches import get_restaurants
+from server.config.config import APP_PORT, APP_HOST
 
 app = Flask(__name__)
 

@@ -1,13 +1,13 @@
 from celery import Celery
 
-from server.config import APP_NAME, CELERY_RESULT_BACKEND, CELERY_BROKER_URL, FACEBOOK_SCRAPE_INTERVAL_SECONDS
-from server.database import redis_client
-from server.facebook_source import get_lunches_from_facebook
-from server.lunches import get_restaurants
+from server.app.database import redis_client
+from server.app.facebook_source import get_lunches_from_facebook
+from server.app.lunches import get_restaurants
+from server.config.config import FACEBOOK_SCRAPE_INTERVAL_SECONDS, APP_NAME, CELERY_RESULT_BACKEND, CELERY_BROKER_URL
 
 celery_beat_schedule = {
     'add-every-' + str(FACEBOOK_SCRAPE_INTERVAL_SECONDS) + '-seconds': {
-        'task': 'scheduler.scrape_lunches_in_background',
+        'task': 'server.app.scheduler.scrape_lunches_in_background',
         'schedule': FACEBOOK_SCRAPE_INTERVAL_SECONDS,
     }
 }
@@ -33,3 +33,5 @@ def scrape_lunches_in_background():
         redis_client.hmset(l.name,
                            {'image': l.image, 'description': l.description,
                             'time': l.time.strftime('%m/%d/%Y, %H:%M:%S')})
+
+
