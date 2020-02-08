@@ -11,6 +11,6 @@ REDIS_HOST = 'localhost'
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
-APP_PORT = '8080'
-APP_HOST = 'localhost'
+APP_PORT = '8000'
+APP_HOST = '0.0.0.0'
 APP_NAME = 'food_grep'

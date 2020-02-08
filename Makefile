@@ -1,5 +1,5 @@
 build_app:
-	docker build -t food-grep-server .
+	docker build -t food-grep-server -f ./deploy/Dockerfile .
 
 run_local_dependecies:
 	export PYTHONPATH=./server
