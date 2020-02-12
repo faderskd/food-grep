@@ -4,9 +4,8 @@ from collections import namedtuple
 
 from facebook_scraper import get_posts
 
-from server.app.app import DEFAULT_LUNCH_PATTERN
 from server.app.lunches import Lunch
-from server.config.config import FACEBOOK_SCRAPE_SLEEP, FACEBOOK_PAGES, FACEBOOK_URL
+from server.config.config import FACEBOOK_SCRAPE_SLEEP, FACEBOOK_PAGES, FACEBOOK_URL, DEFAULT_LUNCH_PATTERN
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +19,7 @@ def get_lunches_from_facebook(restaurant_list):
             for post in fetch_facebook_restaurant_posts(facebook_name):
                 if is_lunch(post, rest):
                     yield Lunch(rest.name, post.text, post.image, post.time)
+                    break
         except Exception as e:
             logger.exception('Failed to search lunch for restaurant %s...' % str(rest), e)
 
@@ -38,6 +38,13 @@ def fetch_facebook_restaurant_posts(restaurant_id):
 
 
 def is_lunch(post, restaurant):
-    if restaurant.lunch_regex:
-        return re.match(restaurant.lunch_regex, post.text)
+    if restaurant.requirements.lunch_regex:
+        return re.match(restaurant.requirements.lunch_regex, post.text, re.IGNORECASE)
+    if restaurant.requirements.time:
+        return matches_time(post.time, restaurant.requirements.time)
     return DEFAULT_LUNCH_PATTERN.match(post.text)
+
+
+def matches_time(time, expected_time):
+    return time.hour == expected_time.hour and \
+           time.minute == expected_time.minute

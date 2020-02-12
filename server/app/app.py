@@ -1,16 +1,13 @@
-import re
 import logging
 
 from flask import Flask, jsonify
 
 from server.app.database import get_cached_lunches
 from server.app.lunches import get_restaurants
+from server.app.scheduler import scrape_lunches_in_background
 from server.config.config import APP_PORT, APP_HOST
 
 app = Flask(__name__)
-
-COMMON_LUNCH_PHRASES = 'lunch,obiad'
-DEFAULT_LUNCH_PATTERN = re.compile('|'.join(COMMON_LUNCH_PHRASES.split(',')))
 
 logger = logging.getLogger(__name__)
 
@@ -29,4 +26,5 @@ def convert_lunches_to_dict(lunches):
 
 
 if __name__ == '__main__':
+    scrape_lunches_in_background()
     app.run(APP_HOST, APP_PORT)
