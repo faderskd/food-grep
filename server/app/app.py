@@ -4,7 +4,6 @@ from flask import Flask, jsonify
 
 from server.app.database import get_cached_lunches
 from server.app.lunches import get_restaurants
-from server.app.scheduler import scrape_lunches_in_background
 from server.config.config import APP_PORT, APP_HOST
 
 app = Flask(__name__)
