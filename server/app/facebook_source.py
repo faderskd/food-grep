@@ -33,13 +33,13 @@ def get_restaurant_name_from_facebook_url(url):
 
 
 def fetch_facebook_restaurant_posts(restaurant_id):
-    for post in get_posts(restaurant_id, pages=FACEBOOK_PAGES, sleep=FACEBOOK_SCRAPE_SLEEP):
+    for post in list(get_posts(restaurant_id, pages=FACEBOOK_PAGES, sleep=FACEBOOK_SCRAPE_SLEEP)):
         yield Post(post['text'], post['time'], post['image'])
 
 
 def is_lunch(post, restaurant):
     if restaurant.requirements.lunch_regex:
-        return re.match(restaurant.requirements.lunch_regex, post.text, re.IGNORECASE)
+        return re.match(restaurant.requirements.lunch_regex, post.text, re.IGNORECASE | re.MULTILINE | re.DOTALL)
     if restaurant.requirements.time:
         return matches_time(post.time, restaurant.requirements.time)
     return DEFAULT_LUNCH_PATTERN.match(post.text)

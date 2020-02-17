@@ -26,5 +26,4 @@ def convert_lunches_to_dict(lunches):
 
 
 if __name__ == '__main__':
-    scrape_lunches_in_background()
     app.run(APP_HOST, APP_PORT)
