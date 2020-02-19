@@ -9,8 +9,8 @@ export default class LunchClient {
   }
 
   async fetchLunchesToday() {
-    let response = await fetch(this.serverUrl + '/lunches-today');
+    let response = await fetch(this.serverUrl + '/api/lunches-today');
     let json = await response.json();
-    return json['lunches'].map(info => new LunchInfo(info.imageUrl, info.description, info.name));
+    return json.map(info => new LunchInfo(info.image, info.description, info.name));
   }
 }

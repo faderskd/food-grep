@@ -13,6 +13,14 @@ const router = new VueRouter({
         lunchClient: Config.lunchClient,
       },
     },
+    {
+      path: '*',
+      name: 'Default',
+      component: LunchListComponent,
+      props: {
+        lunchClient: Config.lunchClient,
+      },
+    },
   ],
 });
 

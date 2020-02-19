@@ -10,3 +10,6 @@ run_local_dependecies:
 run_local:
 	export PYTHONPATH=./server
 	python -m server.app.app
+
+run_container:
+	docker run -it -p "8000:8000" food-grep-server

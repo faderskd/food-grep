@@ -6,7 +6,7 @@
                     <img v-bind:src="lunchInfo.imageUrl" class="card-img-top" v-bind:alt="lunchInfo.name + ' photo'">
                     <div class="card-body">
                         <h5 class="card-title">{{lunchInfo.name}}</h5>
-                        <p class="card-text">{{lunchInfo.description}}</p>
+                        <div class="card-text overflow-auto h-25">{{lunchInfo.description}}</div>
                     </div>
                 </div>
             </div>
@@ -37,5 +37,9 @@
     img {
         max-height: 200px;
         object-fit: cover;
+    }
+
+    .card {
+        white-space: pre;
     }
 </style>

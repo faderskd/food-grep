@@ -18,7 +18,7 @@
     {
       "name": "Folk Gospoda",
       "url": "http://www.folkgospoda.pl/pl/tresci/291,lunch-codziennie-nowa-oferta.html",
-      "image_url_regex": ".*photos/ckeditor/LUNCH_nowy.*"
+      "image_url_regex": ".*LUNCH_nowy.*"
     },
     {
       "name": "Street",

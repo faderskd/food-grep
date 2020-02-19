@@ -36,5 +36,5 @@ def scrape_lunches_in_background():
     restaurant_list = get_restaurants()
     for l in scrape_lunches(restaurant_list):
         redis_client.hmset(l.name,
-                           {'image': l.image, 'description': l.description,
+                           {'image': l.image or '', 'description': l.description or '',
                             'time': l.time.strftime('%m/%d/%Y %H:%M:%S')})
