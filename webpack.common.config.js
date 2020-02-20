@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: {
     index: './src/index.js',
-    vendor: './src/vendor.js',
   },
   module: {
     rules: [
@@ -25,18 +24,20 @@ module.exports = {
       },
       {
         test: /\.vue$/,
-        use: 'vue-loader'
-      }
+        use: 'vue-loader',
+      },
     ],
   },
   resolve: {
     extensions: ['.ts', '.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
-    }
+      'vue$': 'vue/dist/vue.esm.js',
+    },
   },
-  plugins: [new HtmlWebpackPlugin({
-    template: './src/index.html',
-  }),
-    new VueLoaderPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+    }),
+    new VueLoaderPlugin(),
+  ],
 };
