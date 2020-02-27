@@ -1,8 +1,10 @@
+import json
 import logging
+from typing import List
 
 import redis
 
-from server.app.lunches import Lunch
+from server.app.model import Lunch, Restaurant, parse_restaurants
 from server.config.config import REDIS_HOST, REDIS_PORT
 
 logger = logging.getLogger(__name__)
@@ -22,6 +24,20 @@ def get_cached_lunches(restaurant_list):
 
 
 def lunch_or_none_when_not_exist(rest):
-    lunch = redis_client.hmget(rest.name, 'description', 'image', 'time')
-    if any(lunch):
-        return Lunch(rest.name, lunch[0], lunch[1], lunch[2])
+    data = json.loads(redis_client.get(rest.name))
+    if data:
+        return Lunch.from_dict(data)
+
+
+def save_lunch(lunch: Lunch):
+    redis_client.set(lunch.name, json.dumps(lunch.to_dict()))
+
+
+def save_restaurants(restaurants: List[Restaurant]):
+    restaurants_list = [r.to_dict() for r in restaurants]
+    redis_client.set('restaurants', json.dumps(restaurants_list))
+
+
+def get_saved_restaurants():
+    restaurants_data = json.loads(redis_client.get('restaurants'))
+    return parse_restaurants(restaurants_data)

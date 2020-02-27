@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib import parse
 
-from server.app.lunches import Lunch
+from server.app.model import Lunch
 from server.app.utils import get_time
 
 logger = logging.getLogger(__name__)

@@ -1,6 +1,6 @@
 from celery import Celery
 
-from server.app.database import redis_client
+from server.app.database import save_lunch
 from server.app.facebook_source import get_lunches_from_facebook, is_facebook
 from server.app.html_source import get_lunches_from_html
 from server.app.lunches import get_restaurants
@@ -35,6 +35,4 @@ def scrape_lunches(restaurant_list):
 def scrape_lunches_in_background():
     restaurant_list = get_restaurants()
     for l in scrape_lunches(restaurant_list):
-        redis_client.hmset(l.name,
-                           {'image': l.image or '', 'description': l.description or '',
-                            'time': l.time.strftime('%m/%d/%Y %H:%M:%S')})
+        save_lunch(l)

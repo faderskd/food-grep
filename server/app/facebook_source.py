@@ -4,7 +4,7 @@ from collections import namedtuple
 
 from facebook_scraper import get_posts
 
-from server.app.lunches import Lunch
+from server.app.model import Lunch
 from server.config.config import FACEBOOK_SCRAPE_SLEEP, FACEBOOK_PAGES, FACEBOOK_URL, DEFAULT_LUNCH_PATTERN
 
 logger = logging.getLogger(__name__)

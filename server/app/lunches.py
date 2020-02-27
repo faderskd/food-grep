@@ -1,15 +1,9 @@
 import json
 import pathlib
-from collections import namedtuple
 from datetime import datetime
 
+from server.app.model import RestaurantRequirements, Restaurant
 from server.config.config import RESTAURANT_FILE
-
-Lunch = namedtuple('Lunch', ['name', 'description', 'image', 'time'])
-
-RestaurantRequirements = namedtuple('RestaurantRequirements', ['lunch_regex', 'image_url_regex', 'time'])
-
-Restaurant = namedtuple('Restaurant', ['name', 'url', 'requirements'])
 
 NOW_DATE_AS_STR = datetime.now().strftime('%m/%d/%Y')
 
