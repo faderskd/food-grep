@@ -1,9 +1,8 @@
 from celery import Celery
 
-from server.app.database import save_lunch
+from server.app.database import save_lunch, get_saved_restaurants
 from server.app.facebook_source import get_lunches_from_facebook, is_facebook
 from server.app.html_source import get_lunches_from_html
-from server.app.lunches import get_restaurants
 from server.config.config import FACEBOOK_SCRAPE_INTERVAL_SECONDS, APP_NAME, CELERY_RESULT_BACKEND, CELERY_BROKER_URL
 
 celery_beat_schedule = {
@@ -33,6 +32,6 @@ def scrape_lunches(restaurant_list):
 
 @celery.task
 def scrape_lunches_in_background():
-    restaurant_list = get_restaurants()
+    restaurant_list = get_saved_restaurants()
     for l in scrape_lunches(restaurant_list):
         save_lunch(l)

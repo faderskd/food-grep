@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import List
 
 import redis
 
@@ -24,20 +23,32 @@ def get_cached_lunches(restaurant_list):
 
 
 def lunch_or_none_when_not_exist(rest):
-    data = json.loads(redis_client.get(rest.name))
+    rest_data = redis_client.get(rest.name)
+    data = json.loads(rest_data) if rest_data else None
     if data:
         return Lunch.from_dict(data)
 
 
 def save_lunch(lunch: Lunch):
-    redis_client.set(lunch.name, json.dumps(lunch.to_dict()))
+    redis_client.set(lunch.restaurant_name, json.dumps(lunch.to_dict()))
 
 
-def save_restaurants(restaurants: List[Restaurant]):
-    restaurants_list = [r.to_dict() for r in restaurants]
-    redis_client.set('restaurants', json.dumps(restaurants_list))
+def save_restaurant(restaurant: Restaurant):
+    existing_list = get_saved_restaurants()
+    append_or_replace_in_list(restaurant, existing_list)
+    to_save = [r.to_dict() for r in existing_list]
+    redis_client.set('restaurants', json.dumps(to_save))
 
 
 def get_saved_restaurants():
-    restaurants_data = json.loads(redis_client.get('restaurants'))
-    return parse_restaurants(restaurants_data)
+    restaurants_data = redis_client.get('restaurants')
+    restaurants = json.loads(restaurants_data) if restaurants_data else []
+    return parse_restaurants(restaurants)
+
+
+def append_or_replace_in_list(restaurant, restaurant_list):
+    if restaurant in restaurant_list:
+        index = restaurant_list.index(restaurant)
+        restaurant_list[index] = restaurant
+    else:
+        restaurant_list.append(restaurant)

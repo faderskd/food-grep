@@ -7,7 +7,7 @@
                     <router-link class="nav-link" to="home">Lunches</router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="edit-lunches">Edit lunches</router-link>
+                    <router-link class="nav-link" to="restaurants">Restaurants</router-link>
                 </li>
             </ul>
         </div>
