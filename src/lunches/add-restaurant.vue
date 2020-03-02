@@ -93,8 +93,9 @@
       },
       createRestaurant() {
         this.validate();
-        this.restaurantList.push(Restaurant());
-        this.lunchClient.saveRestaurants(t);
+        let restaurant = new Restaurant(this.form.name, this.form.lunchRegex, this.form.imageUrlRegex, this.form.time);
+        this.lunchClient.createRestaurant(restaurant);
+        this.restaurantList.push(restaurant);
       },
       validate() {
 

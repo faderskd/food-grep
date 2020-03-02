@@ -33,9 +33,22 @@ def save_lunch(lunch: Lunch):
     redis_client.set(lunch.restaurant_name, json.dumps(lunch.to_dict()))
 
 
-def save_restaurant(restaurant: Restaurant):
+def create_restaurant(restaurant: Restaurant):
     existing_list = get_saved_restaurants()
-    append_or_replace_in_list(restaurant, existing_list)
+    if restaurant in existing_list:
+        raise RestaurantAlreadyExistsException("Restaurant %s already exists" % restaurant.name)
+
+    existing_list.append(restaurant)
+    to_save = [r.to_dict() for r in existing_list]
+    redis_client.set('restaurants', json.dumps(to_save))
+
+
+def edit_restaurant(restaurant: Restaurant):
+    existing_list = get_saved_restaurants()
+    if restaurant not in existing_list:
+        raise RestaurantDoesNotExist("Restaurant %s does not exist" % restaurant.name)
+
+    replace_in_list(restaurant, existing_list)
     to_save = [r.to_dict() for r in existing_list]
     redis_client.set('restaurants', json.dumps(to_save))
 
@@ -46,9 +59,14 @@ def get_saved_restaurants():
     return parse_restaurants(restaurants)
 
 
-def append_or_replace_in_list(restaurant, restaurant_list):
-    if restaurant in restaurant_list:
-        index = restaurant_list.index(restaurant)
-        restaurant_list[index] = restaurant
-    else:
-        restaurant_list.append(restaurant)
+def replace_in_list(restaurant, restaurant_list):
+    index = restaurant_list.index(restaurant)
+    restaurant_list[index] = restaurant
+
+
+class RestaurantAlreadyExistsException(Exception):
+    pass
+
+
+class RestaurantDoesNotExist(Exception):
+    pass

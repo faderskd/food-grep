@@ -5,4 +5,13 @@ class Restaurant {
     this.imageUrlRegex = imageUrlRegex;
     this.time = time;
   }
+
+  toDict() {
+    return {
+      name: this.name,
+      lunchRegex: this.lunchRegex,
+      imageUrlRegex: this.imageUrlRegex,
+      time: this.time,
+    };
+  }
 }
