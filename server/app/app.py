@@ -29,6 +29,7 @@ def restaurants():
         try:
             return create_or_edit_restaurant()
         except (RestaurantAlreadyExistsException, RestaurantDoesNotExist) as e:
+            logger.exception(e)
             return convert_exception_to_response(e)
 
 
@@ -47,7 +48,6 @@ def convert_elements_to_dict(element_list):
 
 
 def convert_exception_to_response(ex):
-    logger.exception(ex)
     if isinstance(ex, (RestaurantDoesNotExist, RestaurantAlreadyExistsException)):
         return jsonify({'error': str(ex)}), 400
     return make_response(500)
