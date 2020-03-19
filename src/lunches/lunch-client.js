@@ -1,10 +1,10 @@
 import LunchInfo from './lunch-info';
-import get from 'bootstrap-vue/esm/utils/get';
+import {Restaurant} from './model';
 
 const fetch = require('node-fetch');
 
 
-export default class LunchClient {
+class LunchClient {
   constructor(serverUrl) {
     this.serverUrl = serverUrl;
   }
@@ -26,7 +26,7 @@ export default class LunchClient {
   }
 
   async getRestaurants() {
-    await getData(this.serverUrl + '/api/restaurants');
+    return await getData(this.serverUrl + '/api/restaurants');
   }
 }
 
@@ -42,9 +42,9 @@ async function sendData(url, data = {}, method = 'POST') {
 
   if (response.status === 400) {
     const errorData = await response.json();
-    throw new ApiError(errorData['error']);
+    throw new ApiValidationError(errorData['errors']);
   } else if (!response.status.ok) {
-    throw new ApiError('Sorry, unknown error :(');
+    throw new ApiUnknownError('Sorry, unknown error :(');
   }
   return response;
 }
@@ -58,13 +58,29 @@ async function getData(url) {
   const json = await response.json();
 
   if (!response.ok) {
-    throw new ApiError('Sorry unknown error :(');
+    throw new ApiUnknownError('Sorry unknown error :(');
   }
-  return json;
+  return json.map(
+    data => new Restaurant(
+      data.name,
+      data.url,
+      data.requirements.lunch_regex,
+      data.requirements.image_url_regex,
+      data.requirements.time,
+    ),
+  );
 }
 
-class ApiError {
+class ApiUnknownError {
   constructor(msg) {
     this.msg = msg;
   }
 }
+
+class ApiValidationError {
+  constructor(errors) {
+    this.errors = errors;
+  }
+}
+
+export {LunchClient, ApiValidationError, ApiUnknownError}

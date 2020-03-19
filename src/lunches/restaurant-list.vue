@@ -1,11 +1,11 @@
 <template>
     <div class="accordion" id="restaurantsCollapse">
-        <div v-for="(rest, index) in items" class="card">
+        <div v-for="(rest, index) in restaurantList" class="card">
             <div class="card-header" :id="'heading' + index">
                 <h2 class="mb-0">
                     <button class="btn btn-link" type="button" data-toggle="collapse" :data-target="'#collapse' + index"
                             aria-expanded="true" aria-controls="collapseOne">
-                        Restaurant {{index}}
+                        {{rest.name}}
                     </button>
                 </h2>
             </div>
@@ -13,7 +13,10 @@
             <div :id="'collapse' + index" class="collapse"
                  data-parent="#restaurantsCollapse">
                 <div class="card-body">
-                    Restaurant {{index}} description
+                    {{rest.url}}
+                    {{rest.lunchRegex}}
+                    {{rest.imageUrlRegex}}
+                    {{rest.time}}
                 </div>
             </div>
         </div>
@@ -24,9 +27,9 @@
   export default {
     name: 'RestaurantList',
     props: {
-      restaurantList: {
+      eventBus: {
         required: true,
-        type: Array,
+        type: Object,
       },
       lunchClient: {
         required: true,
@@ -35,8 +38,11 @@
     },
     data() {
       return {
-        items: [1, 2, 3],
+        restaurantList: [],
       };
+    },
+    async mounted() {
+      this.restaurantList = await this.lunchClient.getRestaurants();
     },
   };
 </script>

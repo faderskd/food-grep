@@ -20,6 +20,7 @@ const router = new VueRouter({
       component: EditLunchesComponent,
       props: {
         lunchClient: Config.lunchClient,
+        eventBus: Config.eventBus
       },
     },
     {

@@ -55,6 +55,13 @@ class RestaurantRequirements:
         return RestaurantRequirements(lunch_regex, image_url_regex, time)
 
     @staticmethod
+    def validate(data):
+        errors = {}
+        if 'lunch_regex' not in data and 'image_url_regex' not in data and 'time' not in data:
+            errors['requirements'] = 'At least one of the fields [lunch_regex, image_url_regex, time] is required'
+        return errors
+
+    @staticmethod
     def parse_time_requirement(time):
         now_date_as_str = CONSTANT_DATETIME.strftime('%m/%d/%Y')
         date_str = "%s %s" % (now_date_as_str, time)
@@ -84,6 +91,19 @@ class Restaurant:
         requirements = RestaurantRequirements.from_dict(data['requirements'])
         return Restaurant(name, url, requirements)
 
+    @staticmethod
+    def validate(data):
+        errors = {}
+        if 'name' not in data or not data['name']:
+            errors['name'] = 'Name is required'
+        if 'url' not in data or not data['url']:
+            errors['url'] = 'Url is required'
+        if 'requirements' not in data or not isinstance(data['requirements'], dict):
+            errors['requirements'] = 'Requirements are required'
+        else:
+            errors.update(RestaurantRequirements.validate(data['requirements']))
+        return errors
+
     def __eq__(self, other):
         return self.name == other.name
 
@@ -102,3 +122,9 @@ def parse_restaurants(data):
     if data:
         return [Restaurant.from_dict(d) for d in data]
     return []
+
+
+class RestaurantValidationErrorException(Exception):
+    def __init__(self, errors):
+        super().__init__()
+        self.errors = errors
