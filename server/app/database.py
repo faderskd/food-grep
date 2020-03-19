@@ -65,8 +65,12 @@ def replace_in_list(restaurant, restaurant_list):
 
 
 class RestaurantAlreadyExistsException(Exception):
-    pass
+    def __init__(self, msg):
+        super().__init__()
+        self.msg = msg
 
 
 class RestaurantDoesNotExist(Exception):
-    pass
+    def __init__(self, msg):
+        super().__init__()
+        self.msg = msg

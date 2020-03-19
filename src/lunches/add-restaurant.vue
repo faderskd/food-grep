@@ -132,7 +132,7 @@
         this.createRestaurant();
       },
       createRestaurant() {
-        let restaurant = new Restaurant(this.form.name, this.form.lunchRegex, this.form.imageUrlRegex, this.form.time);
+        let restaurant = new Restaurant(this.form.name, this.form.url, this.form.lunchRegex, this.form.imageUrlRegex, this.form.time);
         try {
           this.lunchClient.createRestaurant(restaurant);
         } catch (e) {

@@ -47,6 +47,7 @@ class RestaurantRequirements:
 
     @staticmethod
     def from_dict(data):
+        RestaurantRequirements.validate(data)
         lunch_regex = data.get('lunch_regex', '')
         image_url_regex = data.get('image_url_regex', '')
         time = data.get('time', '')
@@ -59,7 +60,8 @@ class RestaurantRequirements:
         errors = {}
         if 'lunch_regex' not in data and 'image_url_regex' not in data and 'time' not in data:
             errors['requirements'] = 'At least one of the fields [lunch_regex, image_url_regex, time] is required'
-        return errors
+        if errors:
+            raise RestaurantValidationErrorException(errors)
 
     @staticmethod
     def parse_time_requirement(time):
@@ -86,6 +88,7 @@ class Restaurant:
 
     @staticmethod
     def from_dict(data):
+        Restaurant.validate(data)
         name = data['name']
         url = data['url']
         requirements = RestaurantRequirements.from_dict(data['requirements'])
@@ -100,9 +103,8 @@ class Restaurant:
             errors['url'] = 'Url is required'
         if 'requirements' not in data or not isinstance(data['requirements'], dict):
             errors['requirements'] = 'Requirements are required'
-        else:
-            errors.update(RestaurantRequirements.validate(data['requirements']))
-        return errors
+        if errors:
+            raise RestaurantValidationErrorException(errors)
 
     def __eq__(self, other):
         return self.name == other.name

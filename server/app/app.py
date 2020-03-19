@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request, make_response
 
 from server.app.database import get_cached_lunches, get_saved_restaurants, create_restaurant, edit_restaurant, \
     RestaurantAlreadyExistsException, RestaurantDoesNotExist
-from server.app.model import parse_restaurant
+from server.app.model import parse_restaurant, RestaurantValidationErrorException
 from server.config.config import APP_PORT, APP_HOST
 
 app = Flask(__name__)
@@ -28,7 +28,7 @@ def restaurants():
     else:
         try:
             return create_or_edit_restaurant()
-        except (RestaurantAlreadyExistsException, RestaurantDoesNotExist) as e:
+        except (RestaurantAlreadyExistsException, RestaurantDoesNotExist, RestaurantValidationErrorException) as e:
             logger.exception(e)
             return convert_exception_to_response(e)
 
@@ -49,7 +49,9 @@ def convert_elements_to_dict(element_list):
 
 def convert_exception_to_response(ex):
     if isinstance(ex, (RestaurantDoesNotExist, RestaurantAlreadyExistsException)):
-        return jsonify({'error': str(ex)}), 400
+        return jsonify({'error': ex.msg}), 400
+    if isinstance(ex, RestaurantValidationErrorException):
+        return jsonify({'errors': ex.errors}), 400
     return make_response(500)
 
 
