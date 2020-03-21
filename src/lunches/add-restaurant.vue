@@ -14,6 +14,9 @@
                             </button>
                         </div>
                         <div class="modal-body">
+                            <div class="alert alert-danger" role="alert" v-if="otherErrorValidation">
+                                {{ form.otherError }}
+                            </div>
                             <b-form-group
                                     label="Name"
                                     label-for="name">
@@ -92,7 +95,7 @@
 
 <script>
   import {Restaurant} from './model';
-  import {ApiValidationError} from './lunch-client';
+  import {RestaurantFieldsValidationError} from './lunch-client';
 
   export default {
     name: 'add-restaurant',
@@ -108,7 +111,52 @@
     },
     data() {
       return {
-        form: {
+        form: this.createFormInstance(),
+      };
+    },
+    methods: {
+      async onSubmit(evt) {
+        evt.preventDefault();
+        this.clearFormErrors();
+        await this.createRestaurant();
+      },
+      async createRestaurant() {
+        let restaurant = new Restaurant(this.form.name, this.form.url, this.form.lunchRegex, this.form.imageUrlRegex, this.form.time);
+        try {
+          await this.lunchClient.createRestaurant(restaurant);
+        } catch (e) {
+          if (e instanceof RestaurantFieldsValidationError) {
+            this.assignErrorsToFields(e.errors);
+          } else {
+            this.displayError(e.msg);
+          }
+        }
+      },
+      assignErrorsToFields(errors) {
+        if (errors['name']) {
+          this.form.nameError = errors['name'];
+        }
+        if (errors['url']) {
+          this.form.urlError = errors['url'];
+        }
+        if (errors['requirements'] && typeof errors['requirements'] === 'string') {
+          this.form.otherError = errors['requirements'];
+        }
+        Object.keys(errors['requirements']).forEach((field) => {
+          this.form[field + 'Error'] = errors['requirements'][field];
+        });
+      },
+      displayError(msg) {
+        this.form.otherError = msg;
+      },
+      clearForm() {
+        this.form = this.createFormInstance();
+      },
+      clearFormErrors() {
+        this.form.nameError = this.form.urlError = this.form.lunchRegexError = this.form.timeError = this.form.otherError = '';
+      },
+      createFormInstance() {
+        return {
           name: '',
           nameError: '',
 
@@ -123,31 +171,9 @@
 
           time: '',
           timeError: '',
-        },
-      };
-    },
-    methods: {
-      onSubmit(evt) {
-        evt.preventDefault();
-        this.createRestaurant();
-      },
-      createRestaurant() {
-        let restaurant = new Restaurant(this.form.name, this.form.url, this.form.lunchRegex, this.form.imageUrlRegex, this.form.time);
-        try {
-          this.lunchClient.createRestaurant(restaurant);
-        } catch (e) {
-          if (e instanceof ApiValidationError) {
-            this.assignErrorsToFields(e.errors);
-          } else {
-            this.displayError(e.msg);
-          }
-        }
-      },
-      assignErrorsToFields(errors) {
-        console.log(errors);
-      },
-      displayError(msg) {
-        console.log(msg);
+
+          otherError: '',
+        };
       },
     },
     computed: {
@@ -166,7 +192,9 @@
       timeValidation() {
         return this.form.timeError;
       },
-
+      otherErrorValidation() {
+        return this.form.otherError;
+      },
     },
   };
 </script>

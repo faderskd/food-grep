@@ -42,8 +42,8 @@ async function sendData(url, data = {}, method = 'POST') {
 
   if (response.status === 400) {
     const errorData = await response.json();
-    throw new ApiValidationError(errorData['errors']);
-  } else if (!response.status.ok) {
+    throw buildProperException(errorData);
+  } else if (!response.ok) {
     throw new ApiUnknownError('Sorry, unknown error :(');
   }
   return response;
@@ -77,10 +77,30 @@ class ApiUnknownError {
   }
 }
 
-class ApiValidationError {
-  constructor(errors) {
-    this.errors = errors;
+class RestaurantValidationError {
+  constructor(msg) {
+    this.msg = msg;
   }
 }
 
-export {LunchClient, ApiValidationError, ApiUnknownError}
+class RestaurantFieldsValidationError {
+  constructor(errors) {
+    this.errors = errors;
+  }
+
+}
+
+function buildProperException(data) {
+  if (data['code'] === 'RESTAURANT_VALIDATION_ERROR') {
+    return new RestaurantFieldsValidationError(data['errors']);
+  } else {
+    return new RestaurantValidationError(data['error']);
+  }
+}
+
+export {
+  LunchClient,
+  RestaurantValidationError,
+  RestaurantFieldsValidationError,
+  ApiUnknownError,
+};

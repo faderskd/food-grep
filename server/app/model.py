@@ -46,8 +46,17 @@ class RestaurantRequirements:
         return ''
 
     @staticmethod
-    def from_dict(data):
+    def from_json(data):
         RestaurantRequirements.validate(data)
+        lunch_regex = data.get('lunchRegex', '')
+        image_url_regex = data.get('imageUrlRegex', '')
+        time = data.get('time', '')
+        if time:
+            time = RestaurantRequirements.parse_time_requirement(time)
+        return RestaurantRequirements(lunch_regex, image_url_regex, time)
+
+    @staticmethod
+    def from_dict(data):
         lunch_regex = data.get('lunch_regex', '')
         image_url_regex = data.get('image_url_regex', '')
         time = data.get('time', '')
@@ -58,7 +67,11 @@ class RestaurantRequirements:
     @staticmethod
     def validate(data):
         errors = {}
-        if 'lunch_regex' not in data and 'image_url_regex' not in data and 'time' not in data:
+        lunch_regex = data.get('lunchRegex')
+        image_url_regex = data.get('imageUrlRegex')
+        time = data.get('time')
+
+        if not lunch_regex and not image_url_regex and not time:
             errors['requirements'] = 'At least one of the fields [lunch_regex, image_url_regex, time] is required'
         if errors:
             raise RestaurantValidationErrorException(errors)
@@ -88,10 +101,17 @@ class Restaurant:
 
     @staticmethod
     def from_dict(data):
-        Restaurant.validate(data)
         name = data['name']
         url = data['url']
         requirements = RestaurantRequirements.from_dict(data['requirements'])
+        return Restaurant(name, url, requirements)
+
+    @staticmethod
+    def from_json(data):
+        RestaurantRequirements.validate(data)
+        name = data['name']
+        url = data['url']
+        requirements = RestaurantRequirements.from_json(data['requirements'])
         return Restaurant(name, url, requirements)
 
     @staticmethod

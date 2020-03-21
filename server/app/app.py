@@ -48,10 +48,12 @@ def convert_elements_to_dict(element_list):
 
 
 def convert_exception_to_response(ex):
-    if isinstance(ex, (RestaurantDoesNotExist, RestaurantAlreadyExistsException)):
-        return jsonify({'error': ex.msg}), 400
+    if isinstance(ex, RestaurantDoesNotExist):
+        return jsonify({'error': ex.msg, 'code': 'RESTAURANT_DOES_NOT_EXIST'}), 400
+    if isinstance(ex, RestaurantAlreadyExistsException):
+        return jsonify({'error': ex.msg, 'code': 'RESTAURANT_ALREADY_EXISTS'}), 400
     if isinstance(ex, RestaurantValidationErrorException):
-        return jsonify({'errors': ex.errors}), 400
+        return jsonify({'errors': ex.errors, 'code': 'RESTAURANT_VALIDATION_ERROR'}), 400
     return make_response(500)
 
 
