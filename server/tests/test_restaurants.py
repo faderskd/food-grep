@@ -1,27 +1,4 @@
-import unittest
-
-from testcontainers.redis import RedisContainer
-
-from server.app.model import Restaurant, RestaurantRequirements
-from ..config import config
-from server.app import app_factory
-
-
-class BaseIntegrationTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.container = RedisContainer()
-        cls.container.start()
-        config.REDIS_PORT = cls.container.get_exposed_port(6379)
-
-    def setUp(self):
-        app, database = app_factory.create_app_with_dependencies(app_config=config)
-        self.database = database
-        self.test_client = app.test_client()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.container.stop()
+from server.tests.test_utils import BaseIntegrationTest
 
 
 class RestaurantsTest(BaseIntegrationTest):
@@ -38,8 +15,97 @@ class RestaurantsTest(BaseIntegrationTest):
         self.assertEqual(response.status_code, 200)
 
         # and
-        self.assertEqual(self.database.get_saved_restaurants(),
+        self.assertEqual(self.test_client.get('/api/restaurants').get_json(),
                          [
-                             Restaurant('test_restaurant', 'http://folkgospoda.pl',
-                                        RestaurantRequirements('*lunch*', '', ''))
+                             {'name': 'test_restaurant', 'url': 'http://folkgospoda.pl',
+                              'requirements': {'lunchRegex': '*lunch*', 'imageUrlRegex': '', 'time': ''}}
                          ])
+
+    def test_should_edit_restaurant(self):
+        # given
+        self.test_client.post('/api/restaurants', json=self.restaurant_data)
+
+        # when
+        self.restaurant_data.update({'requirements': {'lunchRegex': '*lunch today*', 'time': '09:00'}})
+        self.test_client.put('/api/restaurants', json=self.restaurant_data)
+
+        # then
+        self.assertEqual(self.test_client.get('/api/restaurants').get_json(),
+                         [
+                             {'name': 'test_restaurant', 'url': 'http://folkgospoda.pl',
+                              'requirements': {'lunchRegex': '*lunch today*', 'imageUrlRegex': '', 'time': '09:00'}}
+                         ])
+
+    def test_should_throw_error_when_restaurant_already_exists(self):
+        # given
+        self.test_client.post('/api/restaurants', json=self.restaurant_data)
+
+        # when
+        response = self.test_client.post('/api/restaurants', json=self.restaurant_data)
+
+        # then
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(),
+                         {'error': 'Restaurant test_restaurant already exists', 'code': 'RESTAURANT_ALREADY_EXISTS'})
+
+    def test_should_throw_error_when_restaurant_does_not_exists(self):
+        # when
+        response = self.test_client.put('/api/restaurants', json=self.restaurant_data)
+
+        # then
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(),
+                         {'error': 'Restaurant test_restaurant does not exist', 'code': 'RESTAURANT_DOES_NOT_EXIST'})
+
+    def test_should_throw_validation_error_when_given_bad_data_during_restaurant_creation(self):
+        # given
+        data = {'requirements': {}}
+
+        # when
+        response = self.test_client.post('/api/restaurants', json=data)
+
+        # then
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(),
+                         {'code': 'RESTAURANT_VALIDATION_ERROR',
+                          'errors': {'name': 'Name is required', 'url': 'Url is required',
+                                     'requirements': 'At least one of the fields [lunchRegex, imageUrlRegex, time] is required'}})
+
+        # when
+        data = {}
+        response = self.test_client.post('/api/restaurants', json=data)
+
+        # then
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.get_json(),
+                         {'code': 'RESTAURANT_VALIDATION_ERROR',
+                          'errors': {'name': 'Name is required',
+                                     'url': 'Url is required',
+                                     'requirements': 'Requirements are required'}})
+
+
+        def test_should_throw_validation_error_when_given_bad_data_during_restaurant_edition(self):
+            # given
+            data = {'requirements': {}}
+
+            # when
+            response = self.test_client.post('/api/restaurants', json=data)
+
+            # then
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.get_json(),
+                             {'code': 'RESTAURANT_VALIDATION_ERROR',
+                              'errors': {'name': 'Name is required', 'url': 'Url is required',
+                                         'requirements': 'At least one of the fields [lunchRegex, imageUrlRegex, time] is required'}})
+
+            # when
+            data = {}
+            response = self.test_client.post('/api/restaurants', json=data)
+
+            # then
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(response.get_json(),
+                             {'code': 'RESTAURANT_VALIDATION_ERROR',
+                              'errors': {'name': 'Name is required',
+                                         'url': 'Url is required',
+                                         'requirements': 'Requirements are required'}})

@@ -51,6 +51,8 @@ class Database:
         restaurants = json.loads(restaurants_data) if restaurants_data else []
         return parse_restaurants(restaurants)
 
+    def remove_all(self):
+        self.redis_client.flushall()
 
 def replace_in_list(restaurant, restaurant_list):
     index = restaurant_list.index(restaurant)
