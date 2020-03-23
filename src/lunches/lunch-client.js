@@ -26,7 +26,16 @@ class LunchClient {
   }
 
   async getRestaurants() {
-    return await getData(this.serverUrl + '/api/restaurants');
+    let json = await getData(this.serverUrl + '/api/restaurants');
+    return json.map(
+      data => new Restaurant(
+        data.name,
+        data.url,
+        data.requirements.lunchRegex,
+        data.requirements.imageUrlRegex,
+        data.requirements.time,
+      ),
+    );
   }
 }
 
@@ -44,6 +53,7 @@ async function sendData(url, data = {}, method = 'POST') {
     const errorData = await response.json();
     throw buildProperException(errorData);
   } else if (!response.ok) {
+    console.warn('Response status : ' + response.status);
     throw new ApiUnknownError('Sorry, unknown error :(');
   }
   return response;
@@ -60,15 +70,7 @@ async function getData(url) {
   if (!response.ok) {
     throw new ApiUnknownError('Sorry unknown error :(');
   }
-  return json.map(
-    data => new Restaurant(
-      data.name,
-      data.url,
-      data.requirements.lunch_regex,
-      data.requirements.image_url_regex,
-      data.requirements.time,
-    ),
-  );
+  return json;
 }
 
 class ApiUnknownError {
