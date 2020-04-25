@@ -1,4 +1,5 @@
 from datetime import datetime
+from . import validators
 
 CONSTANT_DATETIME = datetime.fromtimestamp(0)
 
@@ -55,17 +56,6 @@ class RestaurantRequirements:
         return RestaurantRequirements(lunch_regex, image_url_regex, time)
 
     @staticmethod
-    def _validate(data):
-        errors = {}
-        lunch_regex = data.get('lunchRegex')
-        image_url_regex = data.get('imageUrlRegex')
-        time = data.get('time')
-
-        if not lunch_regex and not image_url_regex and not time:
-            errors['requirements'] = 'At least one of the fields [lunchRegex, imageUrlRegex, time] is required'
-        return errors
-
-    @staticmethod
     def parse_time_requirement(time):
         now_date_as_str = CONSTANT_DATETIME.strftime('%m/%d/%Y')
         date_str = "%s %s" % (now_date_as_str, time)
@@ -90,25 +80,11 @@ class Restaurant:
 
     @staticmethod
     def from_dict(data):
-        Restaurant.validate(data)
+        validators.validate_restaurant(data)
         name = data['name']
         url = data['url']
         requirements = RestaurantRequirements.from_dict(data['requirements'])
         return Restaurant(name, url, requirements)
-
-    @staticmethod
-    def validate(data):
-        errors = {}
-        if 'name' not in data or not data['name']:
-            errors['name'] = 'Name is required'
-        if 'url' not in data or not data['url']:
-            errors['url'] = 'Url is required'
-        if 'requirements' not in data or not isinstance(data['requirements'], dict):
-            errors['requirements'] = 'Requirements are required'
-        else:
-            errors.update(RestaurantRequirements._validate(data['requirements']))
-        if errors:
-            raise RestaurantValidationErrorException(errors)
 
     def __eq__(self, other):
         return self.name == other.name
@@ -128,12 +104,3 @@ def parse_restaurants(data):
     if data:
         return [Restaurant.from_dict(d) for d in data]
     return []
-
-
-class RestaurantValidationErrorException(Exception):
-    def __init__(self, errors):
-        super().__init__()
-        self.errors = errors
-
-    def __str__(self):
-        return 'RestaurantValidationErrorException(errors=%s)' % self.errors

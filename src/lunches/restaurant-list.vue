@@ -43,6 +43,10 @@
     },
     async mounted() {
       this.restaurantList = await this.lunchClient.getRestaurants();
+      this.eventBus.$on('restaurant-created', event => {
+        if (this.restaurantList.)
+        this.restaurantList.push(event.restaurant);
+      });
     },
   };
 </script>

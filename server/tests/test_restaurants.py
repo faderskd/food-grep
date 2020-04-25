@@ -1,4 +1,4 @@
-from server.tests.test_utils import BaseIntegrationTest
+from server.tests.utils import BaseIntegrationTest
 
 
 class RestaurantsTest(BaseIntegrationTest):

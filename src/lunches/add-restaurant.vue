@@ -96,6 +96,7 @@
 <script>
   import {Restaurant} from './model';
   import {RestaurantFieldsValidationError} from './lunch-client';
+  import {RestaurantCreatedEvent} from '../Events';
 
   export default {
     name: 'add-restaurant',
@@ -124,11 +125,14 @@
         let restaurant = new Restaurant(this.form.name, this.form.url, this.form.lunchRegex, this.form.imageUrlRegex, this.form.time);
         try {
           await this.lunchClient.createRestaurant(restaurant);
+          this.closeFormModal();
+          this.clearForm();
+          this.sendEvent(restaurant);
         } catch (e) {
           if (e instanceof RestaurantFieldsValidationError) {
             this.assignErrorsToFields(e.errors);
           } else {
-            this.displayError(e.msg);
+            this.displayOtherError(e.msg);
           }
         }
       },
@@ -141,12 +145,13 @@
         }
         if (errors['requirements'] && typeof errors['requirements'] === 'string') {
           this.form.otherError = errors['requirements'];
+        } else if (errors['requirements']) {
+          Object.keys(errors['requirements']).forEach((field) => {
+            this.form[field + 'Error'] = errors['requirements'][field];
+          });
         }
-        Object.keys(errors['requirements']).forEach((field) => {
-          this.form[field + 'Error'] = errors['requirements'][field];
-        });
       },
-      displayError(msg) {
+      displayOtherError(msg) {
         this.form.otherError = msg;
       },
       clearForm() {
@@ -174,6 +179,12 @@
 
           otherError: '',
         };
+      },
+      closeFormModal() {
+        $('#modal').modal('hide');
+      },
+      sendEvent(restaurant) {
+        this.eventBus.$emit('restaurant-created', new RestaurantCreatedEvent(restaurant));
       },
     },
     computed: {

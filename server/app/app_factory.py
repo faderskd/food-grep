@@ -5,8 +5,9 @@ from flask import Flask
 from flask import jsonify, request, make_response
 
 from server.app.database import Database, RestaurantAlreadyExistsException, RestaurantDoesNotExist
+from server.app.validators import RestaurantValidationErrorException
 from server.config import config
-from server.app.model import parse_restaurant, RestaurantValidationErrorException
+from server.app.model import parse_restaurant
 
 logger = logging.getLogger(config.APP_NAME)
 
