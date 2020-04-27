@@ -12,7 +12,7 @@ module.exports = {
         use: ['html-loader'],
       },
       {
-        test: /\.(svg|png|jpg|gif)$/,
+        test: /\.(svg|eot|woff|woff2|ttf)$/,
         use: {
           loader: 'file-loader',
           options: {
@@ -21,6 +21,13 @@ module.exports = {
             esModule: false,
           },
         },
+      },
+      {
+        test: /font-awesome\.config\.js/,
+        use: [
+          {loader: 'style-loader'},
+          {loader: 'font-awesome-loader'},
+        ],
       },
       {
         test: /\.vue$/,

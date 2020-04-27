@@ -7,6 +7,11 @@
                             aria-expanded="true" aria-controls="collapseOne">
                         {{rest.name}}
                     </button>
+                    <a href="#">
+                        <span v-on:click="emitRestaurantEditingEvent(rest, index)" style=" font-size: 20px;">
+                        <i class="fa fa-pencil"></i>
+                        </span>
+                    </a>
                 </h2>
             </div>
 
@@ -24,6 +29,8 @@
 </template>
 
 <script>
+  import {RestaurantEditingEvent} from '../Events';
+
   export default {
     name: 'RestaurantList',
     props: {
@@ -44,9 +51,15 @@
     async mounted() {
       this.restaurantList = await this.lunchClient.getRestaurants();
       this.eventBus.$on('restaurant-created', event => {
-        if (this.restaurantList.)
-        this.restaurantList.push(event.restaurant);
+        if (!this.restaurantList.includes(event.restaurant)) {
+          this.restaurantList.push(event.restaurant);
+        }
       });
+    },
+    methods: {
+      emitRestaurantEditingEvent(restaurant, index) {
+        this.eventBus.$emit('restaurant-editing', new RestaurantEditingEvent(restaurant, index));
+      },
     },
   };
 </script>

@@ -1,14 +1,12 @@
 <template>
     <div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#create-restaurant-modal">Add new</button>
-
         <b-form @submit="onSubmit">
-            <div class="modal fade" id="create-restaurant-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+            <div class="modal fade" id="edit-restaurant-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
                  aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabel">Create Restaurant</h5>
+                            <h5 class="modal-title" id="modalLabel">Edit Restaurant</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -84,7 +82,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <input type="submit" value="Create" class="btn btn-primary">
+                            <input type="submit" value="Edit" class="btn btn-primary">
                         </div>
                     </div>
                 </div>
@@ -96,10 +94,10 @@
 <script>
   import {Restaurant} from './model';
   import {RestaurantFieldsValidationError} from './lunch-client';
-  import {RestaurantCreatedEvent} from '../Events';
+  import {RestaurantEditedEvent} from '../Events';
 
   export default {
-    name: 'add-restaurant',
+    name: 'edit-restaurant',
     props: {
       eventBus: {
         required: true,
@@ -112,21 +110,19 @@
     },
     data() {
       return {
-        form: this.createFormInstance(),
+        form: this.createFormInstance({}),
       };
     },
     methods: {
       async onSubmit(evt) {
         evt.preventDefault();
-        this.clearFormErrors();
-        await this.createRestaurant();
+        await this.editRestaurant();
       },
-      async createRestaurant() {
+      async editRestaurant() {
         let restaurant = new Restaurant(this.form.name, this.form.url, this.form.lunchRegex, this.form.imageUrlRegex, this.form.time);
         try {
-          await this.lunchClient.createRestaurant(restaurant);
+          await this.lunchClient.editRestaurant(restaurant);
           this.closeFormModal();
-          this.clearForm();
           this.sendEvent(restaurant);
         } catch (e) {
           if (e instanceof RestaurantFieldsValidationError) {
@@ -154,37 +150,34 @@
       displayOtherError(msg) {
         this.form.otherError = msg;
       },
-      clearForm() {
-        this.form = this.createFormInstance();
-      },
-      clearFormErrors() {
-        this.form.nameError = this.form.urlError = this.form.lunchRegexError = this.form.timeError = this.form.otherError = '';
-      },
-      createFormInstance() {
+      createFormInstance(restaurant) {
         return {
-          name: '',
+          name: restaurant.name,
           nameError: '',
 
-          url: '',
+          url: restaurant.url,
           urlError: '',
 
-          lunchRegex: '',
+          lunchRegex: restaurant.lunchRegex,
           lunchRegexError: '',
 
-          imageUrlRegex: '',
+          imageUrlRegex: restaurant.imageURL,
           imageUrlRegexError: '',
 
-          time: '',
+          time: restaurant.time,
           timeError: '',
 
           otherError: '',
         };
       },
       closeFormModal() {
-        $('#create-restaurant-modal').modal('hide');
+        $('#edit-restaurant-modal').modal('hide');
+      },
+      showFormModal() {
+        $('#edit-restaurant-modal').modal('show');
       },
       sendEvent(restaurant) {
-        this.eventBus.$emit('restaurant-created', new RestaurantCreatedEvent(restaurant));
+        this.eventBus.$emit('restaurant-edited', new RestaurantEditedEvent(restaurant));
       },
     },
     computed: {
@@ -206,6 +199,12 @@
       otherErrorValidation() {
         return this.form.otherError !== '';
       },
+    },
+    mounted() {
+      this.eventBus.$on('restaurant-editing', event => {
+        this.form = this.createFormInstance(event.restaurant);
+        this.showFormModal();
+      });
     },
   };
 </script>

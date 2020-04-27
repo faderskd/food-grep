@@ -5,6 +5,9 @@
             <div class="col col-sm-12">
                 <add-restaurant-form :event-bus=eventBus :lunch-client=lunchClient></add-restaurant-form>
             </div>
+            <div class="col col-sm-12">
+                <edit-restaurant-form :event-bus=eventBus :lunch-client=lunchClient></edit-restaurant-form>
+            </div>
             <div class="col col-sm-6">
                 <restaurant-list :event-bus=eventBus :lunch-client=lunchClient></restaurant-list>
             </div>
@@ -15,6 +18,7 @@
 <script>
   import Navbar from './navbar';
   import AddRestaurantForm from './add-restaurant';
+  import EditRestaurantForm from './edit-restaurant';
   import RestaurantList from './restaurant-list';
 
   export default {
@@ -29,7 +33,7 @@
       },
     },
     name: 'restaurnants',
-    components: {Navbar, AddRestaurantForm, RestaurantList},
+    components: {Navbar, AddRestaurantForm, EditRestaurantForm, RestaurantList},
   };
 </script>
 
