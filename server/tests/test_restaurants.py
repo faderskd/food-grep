@@ -5,7 +5,7 @@ class RestaurantsTest(BaseIntegrationTest):
     def setUp(self):
         super().setUp()
         self.restaurant_data = {'name': 'test_restaurant', 'url': 'http://folkgospoda.pl',
-                                'requirements': {'lunchRegex': '*lunch*'}}
+                                'requirements': {'lunchRegex': '.*lunch.*'}}
 
     def test_should_create_restaurant(self):
         # when
@@ -18,7 +18,7 @@ class RestaurantsTest(BaseIntegrationTest):
         self.assertEqual(self.test_client.get('/api/restaurants').get_json(),
                          [
                              {'name': 'test_restaurant', 'url': 'http://folkgospoda.pl',
-                              'requirements': {'lunchRegex': '*lunch*', 'imageUrlRegex': '', 'time': ''}}
+                              'requirements': {'lunchRegex': '.*lunch.*', 'imageUrlRegex': '', 'time': ''}}
                          ])
 
     def test_should_edit_restaurant(self):
@@ -26,14 +26,14 @@ class RestaurantsTest(BaseIntegrationTest):
         self.test_client.post('/api/restaurants', json=self.restaurant_data)
 
         # when
-        self.restaurant_data.update({'requirements': {'lunchRegex': '*lunch today*', 'time': '0 9 * * *'}})
+        self.restaurant_data.update({'requirements': {'lunchRegex': '.*lunch today.*', 'time': '0 9 * * *'}})
         self.test_client.put('/api/restaurants', json=self.restaurant_data)
 
         # then
         self.assertEqual(self.test_client.get('/api/restaurants').get_json(),
                          [
                              {'name': 'test_restaurant', 'url': 'http://folkgospoda.pl',
-                              'requirements': {'lunchRegex': '*lunch today*', 'imageUrlRegex': '', 'time': '0 9 * * *'}}
+                              'requirements': {'lunchRegex': '.*lunch today.*', 'imageUrlRegex': '', 'time': '0 9 * * *'}}
                          ])
 
     def test_should_throw_error_when_restaurant_already_exists(self):

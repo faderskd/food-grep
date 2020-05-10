@@ -27,6 +27,12 @@ class Lunch:
         time = datetime.strptime(data['time'], '%m/%d/%Y %H:%M:%S')
         return Lunch(restaurant_name, description, image, time)
 
+    def __eq__(self, other):
+        return self.restaurant_name == other.restaurant_name and \
+               self.description == other.description and \
+               self.image == other.image and \
+               self.time == other.time
+
 
 class RestaurantRequirements:
     def __init__(self, lunch_regex, image_url_regex, time):
