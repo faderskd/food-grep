@@ -1,5 +1,5 @@
 from server.config.config import APP_PORT, APP_HOST
-from . import app_factory
+from server.app import app_factory
 
 
 app, database = app_factory.create_app_with_dependencies(__name__)

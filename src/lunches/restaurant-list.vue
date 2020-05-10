@@ -18,10 +18,26 @@
             <div :id="'collapse' + index" class="collapse"
                  data-parent="#restaurantsCollapse">
                 <div class="card-body">
-                    {{rest.url}}
-                    {{rest.lunchRegex}}
-                    {{rest.imageUrlRegex}}
-                    {{rest.time}}
+                    <table class="table restaurant-details">
+                        <tbody>
+                        <tr>
+                            <td><strong>Url</strong></td>
+                            <td>{{rest.url}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lunch regex</strong></td>
+                            <td>{{rest.lunchRegex}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Image url regex</strong></td>
+                            <td>{{rest.imageUrlRegex}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Time</strong></td>
+                            <td>{{rest.time}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -54,6 +70,9 @@
         if (!this.restaurantList.includes(event.restaurant)) {
           this.restaurantList.push(event.restaurant);
         }
+      });
+      this.eventBus.$on('restaurant-edited', event => {
+        this.$set(this.restaurantList, event.listIndex, event.restaurant);
       });
     },
     methods: {

@@ -10,10 +10,14 @@ class LunchClient {
   }
 
   async fetchLunchesToday() {
-    const response = await fetch(this.serverUrl + '/api/lunches-today');
-    const json = await response.json();
-    // eslint-disable-next-line max-len
-    return json.map((info) => new LunchInfo(info.image, info.description, info.name));
+    let json = await getData(this.serverUrl + '/api/lunches-today');
+    return json.map(
+      info => new LunchInfo(
+        info.imageUrl,
+        info.description,
+        info.restaurantName,
+        info.time),
+    );
   }
 
   async createRestaurant(restaurant) {

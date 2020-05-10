@@ -1,5 +1,5 @@
 from datetime import datetime
-from . import validators
+from . import app_validators
 
 CONSTANT_DATETIME = datetime.fromtimestamp(0)
 
@@ -38,28 +38,15 @@ class RestaurantRequirements:
         return {
             'lunchRegex': self.lunch_regex,
             'imageUrlRegex': self.image_url_regex,
-            'time': self.time_requirement_to_str()
+            'time': self.time
         }
-
-    def time_requirement_to_str(self):
-        if self.time:
-            return self.time.strftime('%H:%M')
-        return ''
 
     @staticmethod
     def from_dict(data):
         lunch_regex = data.get('lunchRegex', '')
         image_url_regex = data.get('imageUrlRegex', '')
         time = data.get('time', '')
-        if time:
-            time = RestaurantRequirements.parse_time_requirement(time)
         return RestaurantRequirements(lunch_regex, image_url_regex, time)
-
-    @staticmethod
-    def parse_time_requirement(time):
-        now_date_as_str = CONSTANT_DATETIME.strftime('%m/%d/%Y')
-        date_str = "%s %s" % (now_date_as_str, time)
-        return datetime.strptime(date_str, '%m/%d/%Y %H:%M')
 
     def __repr__(self):
         return str(self.to_dict())
@@ -80,7 +67,7 @@ class Restaurant:
 
     @staticmethod
     def from_dict(data):
-        validators.validate_restaurant(data)
+        app_validators.validate_restaurant(data)
         name = data['name']
         url = data['url']
         requirements = RestaurantRequirements.from_dict(data['requirements'])

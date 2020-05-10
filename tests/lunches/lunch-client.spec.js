@@ -8,10 +8,10 @@ const chai = require('chai');
 const {expect} = chai;
 
 describe('async/await functions in js', () => {
-  const lunchClient = new LunchClient('http://localhost:9000');
+  const lunchClient = new LunchClient('http://localhost:9005');
 
   beforeEach(async () => {
-    await mockServer.start(9000);
+    await mockServer.start(9005);
   });
   afterEach(async () => await mockServer.stop());
 
@@ -30,6 +30,7 @@ describe('async/await functions in js', () => {
     await mockServer.get('/api/restaurants').thenReply(200, data);
     const restaurants = await lunchClient.getRestaurants();
 
+    // then
     expect(restaurants[0]).to.deep.equal(new Restaurant('test_restaurant', 'http://folkgospoda.pl',
       '*lunch*', '', ''));
   });
@@ -53,26 +54,26 @@ describe('async/await functions in js', () => {
     await lunchClient.createRestaurant(new Restaurant('test_restaurant',
       'http://folkgospoda.pl', '*lunch*', '', ''));
   });
-  //
-  // it('should fetch lunches', async () => {
-  //   // eslint-disable-next-line max-len
-  //   const data = JSON.stringify({
-  //     lunches: [
-  //       {
-  //         imageUrl: 'imageUrl1',
-  //         description: 'Description lunch1',
-  //         name: 'Munja',
-  //       },
-  //       {
-  //         imageUrl: 'imageUrl2',
-  //         description: 'Description lunch2',
-  //         name: 'Zigi',
-  //       }],
-  //   });
-  //
-  //   await mockServer.get('/lunches-today').thenReply(200, data);
-  //   const lunches = await lunchClient.fetchLunchesToday();
-  //   expect(lunches[0]).to.deep.equal(new LunchInfo('imageUrl1', 'Description lunch1', 'Munja'));
-  //   expect(lunches[1]).to.deep.equal(new LunchInfo('imageUrl2', 'Description lunch2', 'Zigi'));
-  // });
+
+  it('should fetch lunches', async () => {
+    const data = JSON.stringify([
+      {
+        imageUrl: 'imageUrl1',
+        description: 'Description lunch1',
+        restaurantName: 'Munja',
+        time: '04/14/2020 15:16:18',
+      },
+      {
+        imageUrl: 'imageUrl2',
+        description: 'Description lunch2',
+        restaurantName: 'Zigi',
+        time: '04/14/2020 15:16:18',
+      },
+    ]);
+
+    await mockServer.get('/api/lunches-today').thenReply(200, data);
+    const lunches = await lunchClient.fetchLunchesToday();
+    expect(lunches[0]).to.deep.equal(new LunchInfo('imageUrl1', 'Description lunch1', 'Munja', '04/14/2020 15:16:18'));
+    expect(lunches[1]).to.deep.equal(new LunchInfo('imageUrl2', 'Description lunch2', 'Zigi', '04/14/2020 15:16:18'));
+  });
 });

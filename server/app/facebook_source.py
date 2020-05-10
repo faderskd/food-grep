@@ -2,6 +2,7 @@ import logging
 import re
 from collections import namedtuple
 
+from crontab import CronTab
 from facebook_scraper import get_posts
 
 from server.app.model import Lunch
@@ -46,5 +47,4 @@ def is_lunch(post, restaurant):
 
 
 def matches_time(time, expected_time):
-    return time.hour == expected_time.hour and \
-           time.minute == expected_time.minute
+    return CronTab(expected_time).test(time)

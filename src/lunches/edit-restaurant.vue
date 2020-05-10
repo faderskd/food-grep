@@ -123,7 +123,7 @@
         try {
           await this.lunchClient.editRestaurant(restaurant);
           this.closeFormModal();
-          this.sendEvent(restaurant);
+          this.sendEvent(restaurant, this.form.listIndex);
         } catch (e) {
           if (e instanceof RestaurantFieldsValidationError) {
             this.assignErrorsToFields(e.errors);
@@ -150,7 +150,7 @@
       displayOtherError(msg) {
         this.form.otherError = msg;
       },
-      createFormInstance(restaurant) {
+      createFormInstance(restaurant, listIndex) {
         return {
           name: restaurant.name,
           nameError: '',
@@ -168,6 +168,8 @@
           timeError: '',
 
           otherError: '',
+
+          listIndex: listIndex,
         };
       },
       closeFormModal() {
@@ -176,8 +178,8 @@
       showFormModal() {
         $('#edit-restaurant-modal').modal('show');
       },
-      sendEvent(restaurant) {
-        this.eventBus.$emit('restaurant-edited', new RestaurantEditedEvent(restaurant));
+      sendEvent(restaurant, listIndex) {
+        this.eventBus.$emit('restaurant-edited', new RestaurantEditedEvent(restaurant, listIndex));
       },
     },
     computed: {
@@ -202,7 +204,7 @@
     },
     mounted() {
       this.eventBus.$on('restaurant-editing', event => {
-        this.form = this.createFormInstance(event.restaurant);
+        this.form = this.createFormInstance(event.restaurant, event.listIndex);
         this.showFormModal();
       });
     },

@@ -1,3 +1,5 @@
+import re
+from collections import defaultdict
 from crontab import CronTab
 import validators
 
@@ -21,7 +23,7 @@ def validate_restaurant(data):
 
 
 def validate_requirements(data):
-    errors = {}
+    errors = defaultdict(dict)
     lunch_regex = data.get('lunchRegex')
     image_url_regex = data.get('imageUrlRegex')
     time = data.get('time')
@@ -30,10 +32,22 @@ def validate_requirements(data):
         errors['requirements'] = 'At least one of the fields [lunchRegex, imageUrlRegex, time] is required'
 
     try:
+        if lunch_regex:
+            re.compile(lunch_regex)
+    except Exception as e:
+        errors['requirements']['lunchRegex'] = 'Invalid regex'
+
+    try:
+        if image_url_regex:
+            re.compile(image_url_regex)
+    except Exception as e:
+        errors['requirements']['imageUrlRegex'] = 'Invalid regex'
+
+    try:
         if time:
             CronTab(time)
     except Exception as e:
-        errors['time'] = str(e)
+        errors['requirements']['time'] = str(e)
 
     return errors
 

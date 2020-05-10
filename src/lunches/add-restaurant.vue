@@ -158,7 +158,7 @@
         this.form = this.createFormInstance();
       },
       clearFormErrors() {
-        this.form.nameError = this.form.urlError = this.form.lunchRegexError = this.form.timeError = this.form.otherError = '';
+        this.form.nameError = this.form.urlError = this.form.lunchRegexError = this.form.imageUrlRegexError = this.form.timeError = this.form.otherError = '';
       },
       createFormInstance() {
         return {
