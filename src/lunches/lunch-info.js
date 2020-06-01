@@ -1,7 +1,8 @@
 export default class LunchInfo {
-  constructor(imageUrl, description, name) {
+  constructor(imageUrl, description, restaurantName, time) {
     this.imageUrl = imageUrl;
     this.description = description;
-    this.name = name;
+    this.restaurantName = restaurantName;
+    this.time = time;
   }
 }

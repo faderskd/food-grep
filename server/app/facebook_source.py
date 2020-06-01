@@ -1,10 +1,13 @@
 import logging
 import re
 from collections import namedtuple
+from datetime import datetime
 
+from crontab import CronTab
 from facebook_scraper import get_posts
 
-from server.app.lunches import Lunch
+from server.app.utils import ignore_seconds
+from server.app.model import Lunch
 from server.config.config import FACEBOOK_SCRAPE_SLEEP, FACEBOOK_PAGES, FACEBOOK_URL, DEFAULT_LUNCH_PATTERN
 
 logger = logging.getLogger(__name__)
@@ -46,5 +49,5 @@ def is_lunch(post, restaurant):
 
 
 def matches_time(time, expected_time):
-    return time.hour == expected_time.hour and \
-           time.minute == expected_time.minute
+    time = datetime.strptime(time, '%m/%d/%Y %H:%M:%S')
+    return CronTab(expected_time).test(ignore_seconds(time))

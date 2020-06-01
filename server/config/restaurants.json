@@ -1,44 +1,7 @@
 {
-  "restaurants": [
-    {
-      "name": "Munja",
-      "url": "https://www.facebook.com/MunjaRestaurant/",
-      "lunch_regex": ".*Munj.*Obiad.*"
-    },
-    {
-      "name": "Casa Ristoranti",
-      "url": "https://www.facebook.com/casaristoranti/",
-      "lunch_regex": ".*Zapraszamy.*"
-    },
-    {
-      "name": "Nasze Miejsce",
-      "url": "https://www.facebook.com/naszemiejscerestauracja",
-      "time": "09:00"
-    },
-    {
-      "name": "Folk Gospoda",
-      "url": "http://www.folkgospoda.pl/pl/tresci/291,lunch-codziennie-nowa-oferta.html",
-      "image_url_regex": ".*LUNCH_nowy.*"
-    },
-    {
-      "name": "Street",
-      "url": "https://www.facebook.com/StreetRondoONZ/",
-      "lunch_regex": ".*LUNCH MENU.*"
-    },
-    {
-      "name": "Bombaj Masala",
-      "url": "https://www.facebook.com/Bombaj-Masala-Restauracja-Indyjska-380003522455/",
-      "lunch_regex": ".*THALI LUNCH.*"
-    },
-    {
-      "name": "SpaccaNapoli",
-      "url": "https://www.facebook.com/SpaccaNapoliWarszawa/",
-      "lunch_regex": ".*Cena.*"
-    },
-    {
-      "name": "Brooklyn",
-      "url": "https://www.facebook.com/BrooklynRestaurantandBar/",
-      "lunch_regex": ".*zestaw I.*"
-    }
-  ]
+  "name": "Cas Ristoranti",
+  "url": "https://www.facebook.com/casaristoranti/",
+  "requirements": {
+    "lunch_regex": ".*Zapraszamy.*"
+  }
 }

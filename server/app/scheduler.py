@@ -1,10 +1,9 @@
 from celery import Celery
 
-from server.app.database import redis_client
 from server.app.facebook_source import get_lunches_from_facebook, is_facebook
 from server.app.html_source import get_lunches_from_html
-from server.app.lunches import get_restaurants
 from server.config.config import FACEBOOK_SCRAPE_INTERVAL_SECONDS, APP_NAME, CELERY_RESULT_BACKEND, CELERY_BROKER_URL
+from . import app_factory
 
 celery_beat_schedule = {
     'add-every-' + str(FACEBOOK_SCRAPE_INTERVAL_SECONDS) + '-seconds': {
@@ -23,6 +22,8 @@ celery.conf.update(
     result_serializer='json',
     beat_schedule=celery_beat_schedule)
 
+_, database = app_factory.create_app_with_dependencies(__name__)
+
 
 def scrape_lunches(restaurant_list):
     facebook_lunches = filter(is_facebook, restaurant_list)
@@ -33,8 +34,6 @@ def scrape_lunches(restaurant_list):
 
 @celery.task
 def scrape_lunches_in_background():
-    restaurant_list = get_restaurants()
+    restaurant_list = database.get_saved_restaurants()
     for l in scrape_lunches(restaurant_list):
-        redis_client.hmset(l.name,
-                           {'image': l.image or '', 'description': l.description or '',
-                            'time': l.time.strftime('%m/%d/%Y %H:%M:%S')})
+        database.save_lunch(l)

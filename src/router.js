@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router';
 import LunchListComponent from './lunches/lunch-list';
+import EditLunchesComponent from './lunches/restaurants';
 import Config from './config';
 
 const router = new VueRouter({
@@ -11,6 +12,15 @@ const router = new VueRouter({
       component: LunchListComponent,
       props: {
         lunchClient: Config.lunchClient,
+      },
+    },
+    {
+      path: '/restaurants',
+      name: 'EditLunches',
+      component: EditLunchesComponent,
+      props: {
+        lunchClient: Config.lunchClient,
+        eventBus: Config.eventBus
       },
     },
     {
