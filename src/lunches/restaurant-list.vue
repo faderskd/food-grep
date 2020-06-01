@@ -11,6 +11,9 @@
                         <span v-on:click="emitRestaurantEditingEvent(rest, index)" style=" font-size: 20px;">
                         <i class="fa fa-pencil"></i>
                         </span>
+                        <span v-on:click="emitRestaurantDeletingEvent(rest, index)" style=" font-size: 20px;">
+                        <i class="fa fa-trash"></i>
+                        </span>
                     </a>
                 </h2>
             </div>
@@ -45,7 +48,7 @@
 </template>
 
 <script>
-  import {RestaurantEditingEvent} from '../Events';
+  import {RestaurantDeletingEvent, RestaurantEditingEvent} from '../Events';
 
   export default {
     name: 'RestaurantList',
@@ -74,10 +77,16 @@
       this.eventBus.$on('restaurant-edited', event => {
         this.$set(this.restaurantList, event.listIndex, event.restaurant);
       });
+      this.eventBus.$on('restaurant-deleted', event => {
+        this.$delete(this.restaurantList, event.listIndex);
+      });
     },
     methods: {
       emitRestaurantEditingEvent(restaurant, index) {
         this.eventBus.$emit('restaurant-editing', new RestaurantEditingEvent(restaurant, index));
+      },
+      emitRestaurantDeletingEvent(restaurant, index) {
+        this.eventBus.$emit('restaurant-deleting', new RestaurantDeletingEvent(restaurant, index));
       },
     },
   };

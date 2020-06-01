@@ -36,6 +36,15 @@ def create_app_with_dependencies(name=config.APP_NAME, app_config=config):
                 logger.exception(e)
                 return convert_exception_to_response(e)
 
+    @app.route('/api/restaurants/<restaurant_name>', methods=['DELETE'])
+    def delete_restaurant(restaurant_name):
+        try:
+            database.delete_restaurant(restaurant_name)
+            return make_response()
+        except RestaurantDoesNotExist as e:
+            logger.exception(e)
+            return convert_exception_to_response(e)
+
     def create_or_edit_restaurant():
         restaurant_json = request.get_json()
         restaurant = parse_restaurant(restaurant_json)
@@ -48,13 +57,13 @@ def create_app_with_dependencies(name=config.APP_NAME, app_config=config):
     return app, database
 
 
-def convert_elements_to_dict(element_list):
-    return [l.to_dict() for l in element_list]
+def convert_elements_to_dict(element_dict):
+    return [l.to_dict() for l in element_dict.values()]
 
 
 def convert_exception_to_response(ex):
     if isinstance(ex, RestaurantDoesNotExist):
-        return jsonify({'error': ex.msg, 'code': 'RESTAURANT_DOES_NOT_EXIST'}), 400
+        return jsonify({'error': ex.msg, 'code': 'RESTAURANT_DOES_NOT_EXIST'}), 404
     if isinstance(ex, RestaurantAlreadyExistsException):
         return jsonify({'error': ex.msg, 'code': 'RESTAURANT_ALREADY_EXISTS'}), 400
     if isinstance(ex, RestaurantValidationErrorException):

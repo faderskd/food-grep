@@ -8,6 +8,9 @@
             <div class="col col-sm-12">
                 <edit-restaurant-form :event-bus=eventBus :lunch-client=lunchClient></edit-restaurant-form>
             </div>
+            <div class="col col-sm-12">
+                <delete-restaurant-form :event-bus=eventBus :lunch-client=lunchClient></delete-restaurant-form>
+            </div>
             <div class="col col-sm-6">
                 <restaurant-list :event-bus=eventBus :lunch-client=lunchClient></restaurant-list>
             </div>
@@ -20,6 +23,7 @@
   import AddRestaurantForm from './add-restaurant';
   import EditRestaurantForm from './edit-restaurant';
   import RestaurantList from './restaurant-list';
+  import DeleteRestaurantForm from './delete-restaurant';
 
   export default {
     props: {
@@ -33,7 +37,7 @@
       },
     },
     name: 'restaurnants',
-    components: {Navbar, AddRestaurantForm, EditRestaurantForm, RestaurantList},
+    components: {Navbar, AddRestaurantForm, EditRestaurantForm, RestaurantList, DeleteRestaurantForm},
   };
 </script>
 

@@ -7,6 +7,7 @@ const fetch = require('node-fetch');
 class LunchClient {
   constructor(serverUrl) {
     this.serverUrl = serverUrl;
+    this.restaurantsPath = '/api/restaurants';
   }
 
   async fetchLunchesToday() {
@@ -21,16 +22,20 @@ class LunchClient {
   }
 
   async createRestaurant(restaurant) {
-    await sendData(this.serverUrl + '/api/restaurants', restaurant.toDict());
+    await sendData(this.serverUrl + this.restaurantsPath, restaurant.toDict());
   }
 
   async editRestaurant(restaurant) {
     // eslint-disable-next-line max-len
-    await sendData(this.serverUrl + '/api/restaurants', restaurant.toDict(), 'PUT');
+    await sendData(this.serverUrl + this.restaurantsPath, restaurant.toDict(), 'PUT');
+  }
+
+  async deleteRestaurant(restaurantName) {
+    await sendData(this.serverUrl + this.restaurantsPath + '/' + restaurantName, {}, 'DELETE');
   }
 
   async getRestaurants() {
-    let json = await getData(this.serverUrl + '/api/restaurants');
+    let json = await getData(this.serverUrl + this.restaurantsPath);
     return json.map(
       data => new Restaurant(
         data.name,

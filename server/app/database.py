@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import List
 
 from server.app.model import Lunch, Restaurant, parse_restaurants
 
@@ -29,27 +30,37 @@ class Database:
         self.redis_client.set(lunch.restaurant_name, json.dumps(lunch.to_dict()))
 
     def create_restaurant(self, restaurant: Restaurant):
-        existing_list = self.get_saved_restaurants()
-        if restaurant in existing_list:
+        existing = self.get_saved_restaurants()
+        if restaurant.name in existing:
             raise RestaurantAlreadyExistsException("Restaurant %s already exists" % restaurant.name)
 
-        existing_list.append(restaurant)
-        to_save = [r.to_dict() for r in existing_list]
-        self.redis_client.set('restaurants', json.dumps(to_save))
+        existing[restaurant.name] = restaurant
+        self.save(existing)
 
     def edit_restaurant(self, restaurant: Restaurant):
-        existing_list = self.get_saved_restaurants()
-        if restaurant not in existing_list:
+        existing = self.get_saved_restaurants()
+        if restaurant.name not in existing:
             raise RestaurantDoesNotExist("Restaurant %s does not exist" % restaurant.name)
 
-        replace_in_list(restaurant, existing_list)
-        to_save = [r.to_dict() for r in existing_list]
-        self.redis_client.set('restaurants', json.dumps(to_save))
+        existing[restaurant.name] = restaurant
+        self.save(existing)
+
+    def delete_restaurant(self, restaurant_name):
+        existing = self.get_saved_restaurants()
+        if restaurant_name not in existing:
+            raise RestaurantDoesNotExist("Restaurant %s does not exist" % restaurant_name)
+
+        del existing[restaurant_name]
+        self.save(existing)
 
     def get_saved_restaurants(self):
         restaurants_data = self.redis_client.get('restaurants')
         restaurants = json.loads(restaurants_data) if restaurants_data else []
         return parse_restaurants(restaurants)
+
+    def save(self, rest_list):
+        to_save = [r.to_dict() for r in rest_list.values()]
+        self.redis_client.set('restaurants', json.dumps(to_save))
 
     def remove_all(self):
         self.redis_client.flushall()
@@ -57,6 +68,10 @@ class Database:
 def replace_in_list(restaurant, restaurant_list):
     index = restaurant_list.index(restaurant)
     restaurant_list[index] = restaurant
+
+
+def delete(restaurant_name, restaurant_list: List[Restaurant]):
+    return len([r for r in restaurant_list if r.name == restaurant_name]) > 0
 
 
 class RestaurantAlreadyExistsException(Exception):

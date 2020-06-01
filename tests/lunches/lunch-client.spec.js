@@ -9,6 +9,7 @@ const {expect} = chai;
 
 describe('async/await functions in js', () => {
   const lunchClient = new LunchClient('http://localhost:9005');
+  const restaurantsApiPath = '/api/restaurants';
 
   beforeEach(async () => {
     await mockServer.start(9005);
@@ -27,7 +28,7 @@ describe('async/await functions in js', () => {
     }]);
 
     // when
-    await mockServer.get('/api/restaurants').thenReply(200, data);
+    await mockServer.get(restaurantsApiPath).thenReply(200, data);
     const restaurants = await lunchClient.getRestaurants();
 
     // then
@@ -48,12 +49,26 @@ describe('async/await functions in js', () => {
         },
     });
 
-    await mockServer.post('/api/restaurants').withBody(data).thenReply(200);
+    await mockServer.post(restaurantsApiPath).withBody(data).thenReply(200);
 
     // when
     await lunchClient.createRestaurant(new Restaurant('test_restaurant',
       'http://folkgospoda.pl', '*lunch*', '', ''));
+
+    // then no exception thrown
   });
+
+  it('should delete restaurant', async () => {
+    // given
+    await mockServer.delete(restaurantsApiPath + '/test_restaurant')
+      .thenReply(200);
+
+    // when
+    await lunchClient.deleteRestaurant('test_restaurant')
+
+    // then no exception thrown
+  });
+
 
   it('should fetch lunches', async () => {
     const data = JSON.stringify([

@@ -94,6 +94,10 @@ def parse_restaurant(data):
 
 
 def parse_restaurants(data):
-    if data:
-        return [Restaurant.from_dict(d) for d in data]
-    return []
+    restaurants = {}
+    if not data:
+        return restaurants
+    for d in data:
+        r = parse_restaurant(d)
+        restaurants[d['name']] = r
+    return restaurants

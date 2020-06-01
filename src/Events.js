@@ -18,5 +18,24 @@ class RestaurantEditingEvent {
   }
 }
 
+class RestaurantDeletingEvent {
+  constructor(restaurant, listIndex) {
+    this.restaurant = restaurant;
+    this.listIndex = listIndex;
+  }
+}
 
-export {RestaurantCreatedEvent, RestaurantEditedEvent, RestaurantEditingEvent};
+class RestaurantDeletedEvent {
+  constructor(restaurant, listIndex) {
+    this.restaurant = restaurant;
+    this.listIndex = listIndex;
+  }
+}
+
+export {
+  RestaurantCreatedEvent,
+  RestaurantEditedEvent,
+  RestaurantEditingEvent,
+  RestaurantDeletingEvent,
+  RestaurantDeletedEvent,
+};
