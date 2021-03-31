@@ -25,7 +25,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.0
 kombu==4.6.7
 lunch==0.6.0
-lxml==4.4.2
+lxml==4.6.3
 MarkupSafe==1.1.1
 more-itertools==8.2.0
 packaging==20.3
