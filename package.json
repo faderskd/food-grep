@@ -48,7 +48,7 @@
     "cors-anywhere": "^0.4.1",
     "font-awesome": "^4.7.0",
     "jquery": "^3.4.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "popper": "^1.0.1",
     "popper.js": "^1.16.0",
     "serve": "^11.3.0",
